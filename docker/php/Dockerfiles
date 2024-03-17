@@ -1,0 +1,6 @@
+FROM php:8.2.8-bullseye
+RUN pecl install parallel
+RUN echo "extension=parallel.so" >> /usr/local/etc/php/php.ini-development
+RUN echo "extension=parallel.so" >> /usr/local/etc/php/php.ini-production
+WORKDIR /usr/local/etc/php
+RUN cp php.ini-development php.ini
