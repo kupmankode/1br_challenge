@@ -15,7 +15,7 @@ if ($handle != false) {
 if (empty($stations))
     die('Check station template file');
 //get number of rows from command line
-$rows = 100000000;
+$rows = 1000000;
 
 //set temperature range
 $temp_range = [-99, 99];
