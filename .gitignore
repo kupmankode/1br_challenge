@@ -1,1 +1,3 @@
 data/weather.csv
+.vagrant/*
+data/result.csv
