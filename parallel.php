@@ -124,6 +124,7 @@ if ($handle != false) {
         }
     }
     $str = "";
+    ksort($stations);
     foreach ($stations as $name=>$values) {
         $med = round(($values[0] + $values[1]) / 2, 2);
         $str .= $name. ': '. $values[0] . '/'. $med . '/' . $values[1]. ';';
