@@ -1,4 +1,21 @@
 <?php
+ // Check CLI
+ if (PHP_SAPI != "cli") {
+    die('Not a command');
+}
+// Get args
+if (count($argv) != 3) {
+    die('Invalid command');
+}
+$rows = $argv[1];
+if (!is_numeric($rows)){
+    die('The number of rows must be numeric.');
+}
+$file = 'data/'.$argv[2];
+if (file_exists($file)){
+    die('The file exists. Please choose another name.');
+}
+// Read base data
 $handle = fopen('data/weather_stations.csv', 'r');
 // loadd all station names
 $stations = [];
@@ -13,9 +30,7 @@ if ($handle != false) {
     }
 }
 if (empty($stations))
-    die('Check station template file');
-//get number of rows from command line
-$rows = 1000000;
+    die('Please check base data file.');
 
 //set temperature range
 $temp_range = [-99, 99];
@@ -24,12 +39,29 @@ print date('c', time()).PHP_EOL;
 print "Generate ".number_format($rows)." rows".PHP_EOL;
 print "Memory usage in MB: ".(memory_get_usage() / (1024 * 1024)).PHP_EOL;
 
-// if less than millions, use array otherwise use generator
-if ($rows < 100000001) {
-    $arr = build_weather_data($stations, $temp_range, $rows);
+$limit = 1000000;
+$step = 0;
+$is_first_write = false;
+$end_line = "\n";
+while ($rows > 0) {
+    if ($rows > $limit) {
+       $step = $limit;
+       $rows = $rows - $limit;
+    } else {
+        $step = $rows;
+        $rows = 0;
+    }
+    if ($rows == 0) {
+        $end_line = "";
+    }
+    $arr = build_weather_data($stations, $temp_range, $step);
     print "Memory usage to store array in MB: ".(memory_get_usage() / (1024 * 1024)).PHP_EOL;
-    file_put_contents('data/result.csv', implode("\n", $arr));
+    
+    file_put_contents($file, implode("\n", $arr).$end_line, FILE_APPEND);
+    
+
 }
+
 print "Execute time is: ". (time() - $time) . PHP_EOL;
 print date('c', time()).PHP_EOL;
 /////////////////////////////////////////////////////
